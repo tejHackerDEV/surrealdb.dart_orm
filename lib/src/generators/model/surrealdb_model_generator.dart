@@ -5,8 +5,9 @@ import 'package:build/src/builder/build_step.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:surrealdb_dart_orm_annotations/surrealdb_dart_orm_annotations.dart';
 
-import 'surrealdb_model_field.dart';
-import 'surrealdb_model_visitor.dart';
+import '../../constants.dart';
+import '../../surrealdb_model_field.dart';
+import '../../surrealdb_model_visitor.dart';
 
 class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
   @override
@@ -23,7 +24,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     final stringBuffer = StringBuffer();
     final className = visitor.className;
     final fields = visitor.fields;
-    final generatedClassName = '${className}Model';
+    final generatedClassName = '$className$kModelClassPrefix';
     stringBuffer
       ..writeln('class $generatedClassName {')
       ..writeln(
