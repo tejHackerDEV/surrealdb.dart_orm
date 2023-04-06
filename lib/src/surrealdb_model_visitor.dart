@@ -3,10 +3,12 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/visitor.dart';
 
+import 'constants.dart';
 import 'surrealdb_model_field.dart';
 
 class SurrealDBModelVisitor extends SimpleElementVisitor<void> {
   late String className;
+  SurrealDBModelField? idField;
   List<SurrealDBModelField> fields = [];
 
   @override
@@ -17,13 +19,15 @@ class SurrealDBModelVisitor extends SimpleElementVisitor<void> {
     if (element.name.isEmpty) {
       className = element.displayName;
       element.children.whereType<ParameterElement>().forEach((element) {
-        fields.add(
-          SurrealDBModelField(
-            name: element.name,
-            type: element.type,
-            isRequired: element.isRequired,
-          ),
+        final field = SurrealDBModelField(
+          name: element.name,
+          type: element.type,
+          isRequired: element.isRequired,
         );
+        if (element.name == kIdFieldName) {
+          idField = field;
+        }
+        fields.add(field);
       });
     }
   }
