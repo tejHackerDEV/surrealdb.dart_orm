@@ -1,8 +1,9 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
-library surrealdb_dart_orm;
+import 'package:build/build.dart';
+import 'package:source_gen/source_gen.dart';
 
-export 'src/surrealdb_dart_orm_base.dart';
+import 'src/surrealdb_model_generator.dart';
 
-// TODO: Export any libraries intended for clients of this package.
+Builder surrealdbModelBuilder(BuilderOptions options) => SharedPartBuilder(
+      [SurrealDBModelGenerator()],
+      'surrealdb_dart_model',
+    );

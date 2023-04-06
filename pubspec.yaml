@@ -6,8 +6,13 @@ version: 1.0.0
 environment:
   sdk: '>=2.19.4 <3.0.0'
 
-# dependencies:
-#   path: ^1.8.0
+dependencies:
+  surrealdb_dart_orm_annotations:
+    git:
+      url: https://github.com/tejHackerDEV/surrealdb_dart_orm_annotations
+      ref: develop
+  build: ^2.3.1
+  source_gen: ^1.2.7
 
 dev_dependencies:
   lints: ^2.0.0

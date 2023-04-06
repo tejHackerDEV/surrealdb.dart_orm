@@ -1,0 +1,9 @@
+builders:
+  surrealdb_model_builder:
+    import: "package:surrealdb_dart_orm/surrealdb_dart_orm.dart"
+    builder_factories: ["surrealdbModelBuilder"]
+    build_extensions: { ".dart": [".surrealdb_dart_model.g.dart"] }
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
+    runs_before: ["json_serializable|json_serializable"]
