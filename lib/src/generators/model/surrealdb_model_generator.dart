@@ -33,11 +33,15 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
           fields: fields,
         ),
       )
+      ..writeln(
+        _generateSelectMethod(
+          className: className,
+        ),
+      )
       ..writeln('}');
     return stringBuffer.toString();
   }
 
-  /// Generates code for insert method
   StringBuffer _generateInsertMethod({
     required String className,
     required Iterable<SurrealDBModelField> fields,
@@ -66,6 +70,30 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       ..writeln('}')
       ..writeln('return $className.fromJson(results.first.value);');
     stringBuffer.write('}');
+    return stringBuffer;
+  }
+
+  StringBuffer _generateSelectMethod({
+    required String className,
+  }) {
+    final stringBuffer = StringBuffer();
+    stringBuffer
+      ..writeln('static Future<Iterable<$className>> select({')
+      ..writeln('$className$kWhereClauseClassPrefix? where,')
+      ..writeln('}) async {')
+      ..writeln(
+        'final results = await surrealdb.query(',
+      )
+      ..write('"SELECT * FROM ${className.toLowerCase()}')
+      ..writeln(' \${where == null ? "" : where}",')
+      ..writeln(');')
+      ..writeln('if (results.isEmpty) {')
+      ..writeln('return [];')
+      ..writeln('}')
+      ..writeln(
+        'return results.first.result.map((result) => $className.fromJson(result));',
+      )
+      ..write('}');
     return stringBuffer;
   }
 }
