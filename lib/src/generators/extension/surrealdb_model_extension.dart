@@ -44,7 +44,7 @@ class SurrealDBModelExtensionGenerator
   }) {
     final stringBuffer = StringBuffer();
     stringBuffer
-      ..writeln('Future<$className> save(')
+      ..writeln('Future<$className?> save(')
       ..writeln(') async {')
       ..writeln('final dataToUpdate = toJson();')
       ..writeln('final id = dataToUpdate.remove("id");')
