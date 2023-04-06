@@ -24,18 +24,20 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     final className = visitor.className;
     final fields = visitor.fields;
     final generatedClassName = '${className}Model';
-    stringBuffer.writeln('class $generatedClassName {');
-    stringBuffer.writeln(
-      _buildInsertMethod(
-        className: className,
-        fields: fields,
-      ),
-    );
-    stringBuffer.writeln('}');
+    stringBuffer
+      ..writeln('class $generatedClassName {')
+      ..writeln(
+        _generateInsertMethod(
+          className: className,
+          fields: fields,
+        ),
+      )
+      ..writeln('}');
     return stringBuffer.toString();
   }
 
-  StringBuffer _buildInsertMethod({
+  /// Generates code for insert method
+  StringBuffer _generateInsertMethod({
     required String className,
     required Iterable<SurrealDBModelField> fields,
   }) {
@@ -47,17 +49,22 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       }
       stringBuffer.write('${field.type} ${field.name},');
     }
-    final fieldNameToReturn = className.toLowerCase();
-    stringBuffer
-      ..writeln('}) {')
-      ..write('final $fieldNameToReturn = $className(');
+    stringBuffer.writeln('}) async {');
+    stringBuffer.write('final data = $className(');
     for (final field in fields) {
       final name = field.name;
       stringBuffer.write('$name: $name, ');
     }
     stringBuffer.writeln(');');
-    return stringBuffer
-      ..writeln('return $fieldNameToReturn;')
-      ..writeln('}');
+    stringBuffer
+      ..writeln(
+        'final results = await surrealdb.create("${className.toLowerCase()}", data);',
+      )
+      ..writeln('if (results.length != 1) {')
+      ..writeln('return null;')
+      ..writeln('}')
+      ..writeln('return $className.fromJson(results.first.value);');
+    stringBuffer.write('}');
+    return stringBuffer;
   }
 }
