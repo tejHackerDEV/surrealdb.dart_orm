@@ -71,7 +71,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     stringBuffer.writeln(');');
     stringBuffer
       ..writeln(
-        'final results = await surrealdb.create("${className.toLowerCase()}", data);',
+        'final results = await surrealdb.create("${className.toLowerCase()}", data.toJson(),);',
       )
       ..writeln('if (results.length != 1) {')
       ..writeln('return null;')
