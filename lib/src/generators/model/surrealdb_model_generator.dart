@@ -98,9 +98,11 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       ..writeln('if (results.isEmpty) {')
       ..writeln('return [];')
       ..writeln('}')
-      ..writeln(
-        'return results.first.result.map((result) => $className.fromJson(result));',
-      )
+      ..writeln('final innerResults = results.first.result;')
+      ..writeln('return List.generate(innerResults.length, (index) {')
+      ..writeln('final innerResult = innerResults.elementAt(index);')
+      ..writeln('return $className.fromJson(innerResult);')
+      ..writeln('});')
       ..write('}');
     return stringBuffer;
   }
