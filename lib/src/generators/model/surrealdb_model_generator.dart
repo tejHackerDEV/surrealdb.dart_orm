@@ -25,7 +25,12 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     }
     final stringBuffer = StringBuffer();
     final className = visitor.className;
-    final idField = visitor.idField!;
+    final idField = visitor.idField;
+    if (idField == null) {
+      throw AssertionError(
+        'There must be an `id` field of type String? for $className',
+      );
+    }
     final fields = visitor.fields;
     final generatedClassName = '$className$kModelClassPrefix';
     stringBuffer
