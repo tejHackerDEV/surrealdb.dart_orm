@@ -3,6 +3,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/src/builder/build_step.dart';
+import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:surrealdb_dart_orm_annotations/surrealdb_dart_orm_annotations.dart';
 
@@ -70,7 +71,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     }
     stringBuffer
       ..writeln(');')
-      ..writeln('String thing = "${className.toLowerCase()}";')
+      ..writeln('String thing = "${className..snakeCase}";')
       // if the id is not null then append it to the thing
       ..writeln('if (id != null) {')
       ..writeln('thing += ":\$id";')
@@ -100,7 +101,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       ..writeln(
         'final results = await surrealdb.query(',
       )
-      ..write('"SELECT * FROM ${className.toLowerCase()}')
+      ..write('"SELECT * FROM ${className..snakeCase}')
       ..writeln(' \${where == null ? "" : where}",')
       ..writeln(');')
       ..writeln('if (results.isEmpty) {')
@@ -126,7 +127,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       ..writeln('$idStringType id,')
       ..writeln(') async {')
       ..writeln(
-        'final results = await surrealdb.select("${className.toLowerCase()}:\$id");',
+        'final results = await surrealdb.select("${className..snakeCase}:\$id");',
       )
       ..writeln('if (results.isEmpty) {')
       ..writeln('return null;')

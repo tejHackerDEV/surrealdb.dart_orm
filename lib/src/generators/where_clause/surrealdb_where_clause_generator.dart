@@ -3,6 +3,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/src/builder/build_step.dart';
+import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:surrealdb_dart_orm/src/extensions/dart_type_extension.dart';
 import 'package:surrealdb_dart_orm_annotations/surrealdb_dart_orm_annotations.dart';
@@ -96,7 +97,7 @@ class SurrealDBWhereClauseGenerator
         stringBuffer.write('\\"');
       }
       if (parameterName == kIdFieldName) {
-        stringBuffer.write('${className.toLowerCase()}:');
+        stringBuffer.write('${className..snakeCase}:');
       }
       stringBuffer.write('\$$parameterName');
       if (type.shouldAddApostrophe) {

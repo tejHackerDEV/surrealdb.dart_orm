@@ -2,6 +2,7 @@
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/src/builder/build_step.dart';
+import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:surrealdb_dart_orm_annotations/surrealdb_dart_orm_annotations.dart';
 
@@ -48,7 +49,7 @@ class SurrealDBModelExtensionGenerator
       ..writeln(') async {')
       ..writeln('final jsonData = toJson();')
       ..writeln('final id = jsonData.remove("id");')
-      ..writeln('String thing = "${className.toLowerCase()}";')
+      ..writeln('String thing = "${className.snakeCase}";')
       // as id is null we need to call the create method
       // instead of regular update, if we failed to do so
       // all records in the $className table will be updated
