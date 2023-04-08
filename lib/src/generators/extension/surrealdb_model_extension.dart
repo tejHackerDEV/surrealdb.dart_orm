@@ -49,11 +49,11 @@ class SurrealDBModelExtensionGenerator
       ..writeln('final jsonData = toJson();')
       ..writeln('final id = jsonData.remove("id");')
       ..writeln('String thing = "${className.toLowerCase()}";')
-      // as id is null we need to call the insert method
+      // as id is null we need to call the create method
       // instead of regular update, if we failed to do so
       // all records in the $className table will be updated
       ..writeln('if (id == null) {')
-      ..writeln('return await $className$kModelClassPrefix.insert(');
+      ..writeln('return await $className$kModelClassPrefix.create(');
     for (final field in fields) {
       final name = field.name;
       stringBuffer.write('$name: $name, ');

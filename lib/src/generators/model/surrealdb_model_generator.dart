@@ -30,7 +30,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     stringBuffer
       ..writeln('class $generatedClassName {')
       ..writeln(
-        _generateInsertMethod(
+        _generateCreateMethod(
           className: className,
           fields: fields,
         ),
@@ -50,12 +50,12 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     return stringBuffer.toString();
   }
 
-  StringBuffer _generateInsertMethod({
+  StringBuffer _generateCreateMethod({
     required String className,
     required Iterable<SurrealDBModelField> fields,
   }) {
     final stringBuffer = StringBuffer();
-    stringBuffer.writeln('static Future<$className?> insert({');
+    stringBuffer.writeln('static Future<$className?> create({');
     for (final field in fields) {
       if (field.isRequired) {
         stringBuffer.write('required ');
