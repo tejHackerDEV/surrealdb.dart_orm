@@ -46,8 +46,8 @@ class SurrealDBModelExtensionGenerator
     stringBuffer
       ..writeln('Future<$className?> save(')
       ..writeln(') async {')
-      ..writeln('final dataToUpdate = toJson();')
-      ..writeln('final id = dataToUpdate.remove("id");')
+      ..writeln('final jsonData = toJson();')
+      ..writeln('final id = jsonData.remove("id");')
       ..writeln('String thing = "${className.toLowerCase()}";')
       // as id is null we need to call the insert method
       // instead of regular update, if we failed to do so
@@ -63,7 +63,7 @@ class SurrealDBModelExtensionGenerator
       ..writeln('}')
       ..writeln('thing += ":\$id";')
       ..writeln(
-        'final results = await surrealdb.update(thing, dataToUpdate);',
+        'final results = await surrealdb.update(thing, jsonData);',
       )
       ..writeln('if (results.length != 1) {')
       ..writeln('return null;')

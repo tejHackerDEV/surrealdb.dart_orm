@@ -68,10 +68,18 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       final name = field.name;
       stringBuffer.write('$name: $name, ');
     }
-    stringBuffer.writeln(');');
     stringBuffer
+      ..writeln(');')
+      ..writeln('String thing = "${className.toLowerCase()}";')
+      // if the id is not null then append it to the thing
+      ..writeln('if (id != null) {')
+      ..writeln('thing += ":\$id";')
+      ..writeln('}')
+      // Remove the id from the jsonData that going to create in the db,
+      // this is because id will be automatically passed in the `thing`.
+      ..writeln('final jsonData = data.toJson()..remove("id");')
       ..writeln(
-        'final results = await surrealdb.create("${className.toLowerCase()}", data.toJson(),);',
+        'final results = await surrealdb.create(thing, jsonData);',
       )
       ..writeln('if (results.length != 1) {')
       ..writeln('return null;')
