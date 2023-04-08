@@ -26,6 +26,13 @@ class SurrealDBModelVisitor extends SimpleElementVisitor<void> {
         );
         if (element.name == kIdFieldName) {
           idField = field;
+          if (!field.type.isDartCoreString) {
+            throw ArgumentError.value(
+              field.type,
+              'id',
+              'Type should be of String? but found ${field.type}',
+            );
+          }
         }
         fields.add(field);
       });
