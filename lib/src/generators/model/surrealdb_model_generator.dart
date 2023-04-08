@@ -36,19 +36,27 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     stringBuffer
       ..writeln('class $generatedClassName {')
       ..writeln(
+        _generateTableName(
+          className: className,
+        ),
+      )
+      ..writeln(
         _generateCreateMethod(
           className: className,
+          generatedClassName: generatedClassName,
           fields: fields,
         ),
       )
       ..writeln(
         _generateSelectMethod(
           className: className,
+          generatedClassName: generatedClassName,
         ),
       )
       ..writeln(
         _generateSelectByIdMethod(
           className: className,
+          generatedClassName: generatedClassName,
           idType: idField.type,
         ),
       )
@@ -56,8 +64,17 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     return stringBuffer.toString();
   }
 
+  StringBuffer _generateTableName({required String className}) {
+    final stringBuffer = StringBuffer();
+    stringBuffer.writeln(
+      'static const String tableName = "${className.snakeCase}";',
+    );
+    return stringBuffer;
+  }
+
   StringBuffer _generateCreateMethod({
     required String className,
+    required String generatedClassName,
     required Iterable<SurrealDBModelField> fields,
   }) {
     final stringBuffer = StringBuffer();
@@ -76,7 +93,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     }
     stringBuffer
       ..writeln(');')
-      ..writeln('String thing = "${className..snakeCase}";')
+      ..writeln('String thing = $generatedClassName.tableName;')
       // if the id is not null then append it to the thing
       ..writeln('if (id != null) {')
       ..writeln('thing += ":\$id";')
@@ -97,6 +114,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
 
   StringBuffer _generateSelectMethod({
     required String className,
+    required String generatedClassName,
   }) {
     final stringBuffer = StringBuffer();
     stringBuffer
@@ -106,7 +124,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       ..writeln(
         'final results = await surrealdb.query(',
       )
-      ..write('"SELECT * FROM ${className..snakeCase}')
+      ..write('"SELECT * FROM \${$generatedClassName.tableName}')
       ..writeln(' \${where == null ? "" : where}",')
       ..writeln(');')
       ..writeln('if (results.isEmpty) {')
@@ -123,6 +141,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
 
   StringBuffer _generateSelectByIdMethod({
     required String className,
+    required String generatedClassName,
     required DartType idType,
   }) {
     String idStringType = idType.getDisplayString(withNullability: false);
@@ -132,7 +151,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       ..writeln('$idStringType id,')
       ..writeln(') async {')
       ..writeln(
-        'final results = await surrealdb.select("${className..snakeCase}:\$id");',
+        'final results = await surrealdb.select("\${$generatedClassName.tableName}:\$id");',
       )
       ..writeln('if (results.isEmpty) {')
       ..writeln('return null;')

@@ -3,7 +3,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/src/builder/build_step.dart';
-import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:surrealdb_dart_orm/src/extensions/dart_type_extension.dart';
 import 'package:surrealdb_dart_orm_annotations/surrealdb_dart_orm_annotations.dart';
@@ -26,6 +25,7 @@ class SurrealDBWhereClauseGenerator
     final className = visitor.className;
     final fields = visitor.fields;
     final generatedClassName = '$className$kWhereClauseClassPrefix';
+    final generatedModelClassName = '$className$kModelClassPrefix';
     stringBuffer
       ..writeln('class $generatedClassName {')
       ..writeln('final $kFieldNameToStoreClauses = <String>[];');
@@ -57,6 +57,7 @@ class SurrealDBWhereClauseGenerator
       stringBuffer.writeln(
         _generateOperatorMethod(
           className: className,
+          generatedModelClassName: generatedModelClassName,
           fields: fields,
           operator: entry.key,
           methodPrefix: entry.value['name']!.toString(),
@@ -86,6 +87,7 @@ class SurrealDBWhereClauseGenerator
 
   StringBuffer _generateOperatorMethod({
     required String className,
+    required String generatedModelClassName,
     required Iterable<SurrealDBModelField> fields,
     required String operator,
     required String methodPrefix,
@@ -97,7 +99,7 @@ class SurrealDBWhereClauseGenerator
         stringBuffer.write('\\"');
       }
       if (parameterName == kIdFieldName) {
-        stringBuffer.write('${className..snakeCase}:');
+        stringBuffer.write('\${$generatedModelClassName.tableName}:');
       }
       stringBuffer.write('\$$parameterName');
       if (type.shouldAddApostrophe) {
