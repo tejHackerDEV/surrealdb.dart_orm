@@ -10,6 +10,7 @@ import 'package:surrealdb_dart_orm_annotations/surrealdb_dart_orm_annotations.da
 import '../../constants.dart';
 import '../../surrealdb_model_field.dart';
 import '../../surrealdb_model_visitor.dart';
+import '../../utils.dart';
 
 class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
   @override
@@ -93,11 +94,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
     }
     stringBuffer
       ..writeln(');')
-      ..writeln('String thing = $generatedClassName.tableName;')
-      // if the id is not null then append it to the thing
-      ..writeln('if (id != null) {')
-      ..writeln('thing += ":\$id";')
-      ..writeln('}')
+      ..writeln(Utils.generateThing(generatedClassName))
       // Remove the id from the jsonData that going to create in the db,
       // this is because id will be automatically passed in the `thing`.
       ..writeln('final jsonData = data.toJson()..remove("id");')
@@ -150,8 +147,9 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       ..writeln('static Future<$className?> selectById(')
       ..writeln('$idStringType id,')
       ..writeln(') async {')
+      ..writeln(Utils.generateThing(generatedClassName))
       ..writeln(
-        'final results = await surrealdb.select("\${$generatedClassName.tableName}:\$id");',
+        'final results = await surrealdb.select(thing);',
       )
       ..writeln('if (results.isEmpty) {')
       ..writeln('return null;')

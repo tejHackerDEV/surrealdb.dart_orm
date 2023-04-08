@@ -8,6 +8,7 @@ import 'package:surrealdb_dart_orm_annotations/surrealdb_dart_orm_annotations.da
 import '../../constants.dart';
 import '../../surrealdb_model_field.dart';
 import '../../surrealdb_model_visitor.dart';
+import '../../utils.dart';
 
 class SurrealDBModelExtensionGenerator
     extends GeneratorForAnnotation<SurrealDBModel> {
@@ -51,7 +52,6 @@ class SurrealDBModelExtensionGenerator
       ..writeln(') async {')
       ..writeln('final jsonData = toJson();')
       ..writeln('final id = jsonData.remove("id");')
-      ..writeln('String thing = $generatedModelClassName.tableName;')
       // as id is null we need to call the create method
       // instead of regular update, if we failed to do so
       // all records in the $className table will be updated
@@ -64,7 +64,7 @@ class SurrealDBModelExtensionGenerator
     stringBuffer
       ..writeln(');')
       ..writeln('}')
-      ..writeln('thing += ":\$id";')
+      ..writeln(Utils.generateThing(generatedModelClassName))
       ..writeln(
         'final results = await surrealdb.update(thing, jsonData);',
       )
