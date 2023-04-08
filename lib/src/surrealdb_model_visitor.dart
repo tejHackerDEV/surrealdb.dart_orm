@@ -12,9 +12,6 @@ class SurrealDBModelVisitor extends SimpleElementVisitor<void> {
   List<SurrealDBModelField> fields = [];
 
   @override
-  void visitClassElement(ClassElement element) {}
-
-  @override
   void visitConstructorElement(ConstructorElement element) {
     if (element.name.isEmpty) {
       className = element.displayName;
@@ -37,11 +34,5 @@ class SurrealDBModelVisitor extends SimpleElementVisitor<void> {
         fields.add(field);
       });
     }
-  }
-
-  @override
-  void visitFieldElement(FieldElement element) {
-    print(element.name);
-    print(element.type.toString());
   }
 }
