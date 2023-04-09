@@ -98,6 +98,7 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       // Remove the id from the jsonData that going to create in the db,
       // this is because id will be automatically passed in the `thing`.
       ..writeln('final jsonData = data.toJson()..remove("id");')
+      ..writeln(Utils.generateUtcTimeStamp(forCreated: true))
       ..writeln(
         'final results = await surrealdb.create(thing, jsonData);',
       )

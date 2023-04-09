@@ -65,6 +65,7 @@ class SurrealDBModelExtensionGenerator
       ..writeln(');')
       ..writeln('}')
       ..writeln(Utils.generateThing(generatedModelClassName))
+      ..writeln(Utils.generateUtcTimeStamp(forCreated: false))
       ..writeln(
         'final results = await surrealdb.update(thing, jsonData);',
       )

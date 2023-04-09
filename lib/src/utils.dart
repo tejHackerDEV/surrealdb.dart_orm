@@ -18,4 +18,16 @@ class Utils {
       ..writeln('}');
     return stringBuffer;
   }
+
+  /// Generate the code that will insert timestamp
+  /// into the `jsonData` based on the [forCreated].
+  static StringBuffer generateUtcTimeStamp({
+    required bool forCreated,
+  }) {
+    final stringBuffer = StringBuffer();
+    stringBuffer.writeln(
+      'jsonData["${forCreated ? 'created_at' : 'updated_at'}"] = DateTime.now().toUtc().toIso8601String();',
+    );
+    return stringBuffer;
+  }
 }
