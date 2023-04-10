@@ -37,6 +37,12 @@ class SurrealDBModelExtensionGenerator
           fields: fields,
         ),
       )
+      ..writeln(
+        _generateDeleteMethod(
+          className: className,
+          generatedModelClassName: generatedModelClassName,
+        ),
+      )
       ..writeln('}');
     return stringBuffer.toString();
   }
@@ -68,6 +74,27 @@ class SurrealDBModelExtensionGenerator
       ..writeln(Utils.generateUtcTimeStamp(forCreated: false))
       ..writeln(
         'final results = await surrealdb.update(thing, jsonData);',
+      )
+      ..writeln('if (results.length != 1) {')
+      ..writeln('return null;')
+      ..writeln('}')
+      ..writeln('return $className.fromJson(results.first.value);')
+      ..write('}');
+    return stringBuffer;
+  }
+
+  StringBuffer _generateDeleteMethod({
+    required String className,
+    required String generatedModelClassName,
+  }) {
+    final stringBuffer = StringBuffer();
+    stringBuffer
+      ..writeln('Future<$className?> delete(')
+      ..writeln(') async {')
+      ..writeln('final id = this.id;')
+      ..writeln(Utils.generateThing(generatedModelClassName))
+      ..writeln(
+        'final results = await surrealdb.delete(thing);',
       )
       ..writeln('if (results.length != 1) {')
       ..writeln('return null;')
