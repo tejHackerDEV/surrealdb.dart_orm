@@ -4,7 +4,5 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
 
 extension DartTypeExtension on DartType {
-  bool get shouldAddApostrophe => isDartCoreString || isEnum;
-
   bool get isEnum => TypeChecker.fromRuntime(Enum).isAssignableFromType(this);
 }
