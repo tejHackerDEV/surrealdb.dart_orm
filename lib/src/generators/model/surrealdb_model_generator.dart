@@ -7,19 +7,24 @@ import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:surrealdb_dart_orm_annotations/surrealdb_dart_orm_annotations.dart';
 
+import '../../builder_options.dart';
 import '../../constants.dart';
 import '../../surrealdb_model_field.dart';
 import '../../surrealdb_model_visitor.dart';
 import '../../utils.dart';
 
 class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
+  final BuilderConfig builderConfig;
+
+  SurrealDBModelGenerator(this.builderConfig);
+
   @override
   String generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    final visitor = SurrealDBModelVisitor();
+    final visitor = SurrealDBModelVisitor(builderConfig);
     element.visitChildren(visitor);
     if (visitor.className.isEmpty) {
       return '';
@@ -98,7 +103,12 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       // Remove the id from the jsonData that going to create in the db,
       // this is because id will be automatically passed in the `thing`.
       ..writeln('final jsonData = data.toJson()..remove("id");')
-      ..writeln(Utils.generateUtcTimeStamp(forCreated: true))
+      ..writeln(
+        Utils.generateUtcTimeStamp(
+          forCreated: true,
+          fieldRename: builderConfig.fieldRename,
+        ),
+      )
       ..writeln(
         'final results = await surrealdb.create(thing, jsonData);',
       )

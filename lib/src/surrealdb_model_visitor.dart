@@ -2,11 +2,17 @@
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/visitor.dart';
+import 'package:surrealdb_dart_orm/src/extensions/field_rename_extension.dart';
 
+import 'builder_options.dart';
 import 'constants.dart';
 import 'surrealdb_model_field.dart';
 
 class SurrealDBModelVisitor extends SimpleElementVisitor<void> {
+  final BuilderConfig builderConfig;
+
+  SurrealDBModelVisitor(this.builderConfig);
+
   late String className;
   SurrealDBModelField? idField;
   List<SurrealDBModelField> fields = [];
@@ -18,6 +24,7 @@ class SurrealDBModelVisitor extends SimpleElementVisitor<void> {
       element.children.whereType<ParameterElement>().forEach((element) {
         final field = SurrealDBModelField(
           name: element.name,
+          rename: builderConfig.fieldRename.convert(element.name),
           type: element.type,
           isRequired: element.isRequired,
         );

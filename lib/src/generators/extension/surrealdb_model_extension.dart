@@ -5,6 +5,7 @@ import 'package:build/src/builder/build_step.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:surrealdb_dart_orm_annotations/surrealdb_dart_orm_annotations.dart';
 
+import '../../builder_options.dart';
 import '../../constants.dart';
 import '../../surrealdb_model_field.dart';
 import '../../surrealdb_model_visitor.dart';
@@ -12,13 +13,17 @@ import '../../utils.dart';
 
 class SurrealDBModelExtensionGenerator
     extends GeneratorForAnnotation<SurrealDBModel> {
+  final BuilderConfig builderConfig;
+
+  SurrealDBModelExtensionGenerator(this.builderConfig);
+
   @override
   String generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    final visitor = SurrealDBModelVisitor();
+    final visitor = SurrealDBModelVisitor(builderConfig);
     element.visitChildren(visitor);
     if (visitor.className.isEmpty) {
       return '';
@@ -71,7 +76,12 @@ class SurrealDBModelExtensionGenerator
       ..writeln(');')
       ..writeln('}')
       ..writeln(Utils.generateThing(generatedModelClassName))
-      ..writeln(Utils.generateUtcTimeStamp(forCreated: false))
+      ..writeln(
+        Utils.generateUtcTimeStamp(
+          forCreated: false,
+          fieldRename: builderConfig.fieldRename,
+        ),
+      )
       ..writeln(
         'final results = await surrealdb.update(thing, jsonData);',
       )

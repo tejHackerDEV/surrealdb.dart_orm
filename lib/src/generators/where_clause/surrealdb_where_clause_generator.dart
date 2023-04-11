@@ -7,16 +7,24 @@ import 'package:source_gen/source_gen.dart';
 import 'package:surrealdb_dart_orm/src/extensions/dart_type_extension.dart';
 import 'package:surrealdb_dart_orm_annotations/surrealdb_dart_orm_annotations.dart';
 
+import '../../builder_options.dart';
 import '../../constants.dart';
 import '../../surrealdb_model_field.dart';
 import '../../surrealdb_model_visitor.dart';
 
 class SurrealDBWhereClauseGenerator
     extends GeneratorForAnnotation<SurrealDBModel> {
+  final BuilderConfig builderConfig;
+
+  SurrealDBWhereClauseGenerator(this.builderConfig);
+
   @override
   String generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) {
-    final visitor = SurrealDBModelVisitor();
+    Element element,
+    ConstantReader annotation,
+    BuildStep buildStep,
+  ) {
+    final visitor = SurrealDBModelVisitor(builderConfig);
     element.visitChildren(visitor);
     if (visitor.className.isEmpty) {
       return '';
@@ -137,7 +145,7 @@ class SurrealDBWhereClauseGenerator
             '${supportsDynamicType ? 'dynamic' : fieldType} ${field.name}')
         ..writeln(') {')
         ..writeln(
-          '$kFieldNameToStoreClauses.add("${field.name} $operator ${buildValue(
+          '$kFieldNameToStoreClauses.add("${field.rename} $operator ${buildValue(
             field.type,
             field.name,
             supportsDynamicType,

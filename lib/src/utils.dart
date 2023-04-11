@@ -1,3 +1,7 @@
+import 'package:surrealdb_dart_orm/src/extensions/field_rename_extension.dart';
+
+import 'builder_options.dart';
+
 class Utils {
   static StringBuffer generateThing(String generatedModelName) {
     final stringBuffer = StringBuffer();
@@ -23,10 +27,11 @@ class Utils {
   /// into the `jsonData` based on the [forCreated].
   static StringBuffer generateUtcTimeStamp({
     required bool forCreated,
+    required FieldRename fieldRename,
   }) {
     final stringBuffer = StringBuffer();
     stringBuffer.writeln(
-      'jsonData["${forCreated ? 'created_at' : 'updated_at'}"] = DateTime.now().toUtc().toIso8601String();',
+      'jsonData["${fieldRename.convert(forCreated ? 'createdAt' : 'updatedAt')}"] = DateTime.now().toUtc().toIso8601String();',
     );
     return stringBuffer;
   }
