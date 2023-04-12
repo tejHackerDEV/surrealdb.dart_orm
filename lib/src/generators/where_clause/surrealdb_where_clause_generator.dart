@@ -36,7 +36,10 @@ class SurrealDBWhereClauseGenerator
     final generatedModelClassName = '$className$kModelClassPrefix';
     stringBuffer
       ..writeln('class $generatedClassName {')
-      ..writeln('final $kFieldNameToStoreClauses = <String>[];');
+      ..writeln('final $kFieldNameToStoreClauses = <String>[];')
+      ..writeln(
+        'final $kFieldNameToStoreClauseVariables = <String, dynamic>{};',
+      );
     final operatorsMap = {
       '=': {
         'name': 'EqualsTo',
@@ -126,12 +129,6 @@ class SurrealDBWhereClauseGenerator
           '__valueToCompare = _\$${type.getDisplayString(withNullability: false)}EnumMap[$parameterName]!;',
         );
       }
-      stringBuffer
-        // if value is string then wrap it apostrophe's
-        // else it wont be parsed correctly
-        ..writeln('if (__valueToCompare is String) {')
-        ..writeln('__valueToCompare = "\\"\$__valueToCompare\\"";')
-        ..writeln('}');
       return stringBuffer;
     }
 
@@ -152,8 +149,17 @@ class SurrealDBWhereClauseGenerator
             supportsDynamicType,
           ),
         )
+        // key will be generated as "fieldName_${variableIndex}"
+        // we are using variableIndex as a suffix to avoid duplicate entries
+        // override in the Map, because of same key.
         ..writeln(
-          '$kFieldNameToStoreClauses.add("${field.rename} $operator \$__valueToCompare");',
+          'final key = "${field.rename}_\${$kFieldNameToStoreClauseVariables.length}";',
+        )
+        ..writeln(
+          '$kFieldNameToStoreClauseVariables[key] = __valueToCompare;',
+        )
+        ..writeln(
+          '$kFieldNameToStoreClauses.add("${field.rename} $operator \\\$\$key");',
         )
         ..writeln('}');
     }

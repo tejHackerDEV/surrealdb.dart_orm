@@ -129,11 +129,15 @@ class SurrealDBModelGenerator extends GeneratorForAnnotation<SurrealDBModel> {
       ..writeln('static Future<Iterable<$className>> select({')
       ..writeln('$className$kWhereClauseClassPrefix? where,')
       ..writeln('}) async {')
+      ..writeln('final whereBuffer = StringBuffer();')
+      ..writeln('if (where != null) {')
+      ..writeln('whereBuffer.writeln(where);')
+      ..writeln('}')
       ..writeln(
         'final results = await surrealdb.query(',
       )
       ..write('"SELECT * FROM \${$generatedClassName.tableName}')
-      ..writeln(' \${where == null ? "" : where}",')
+      ..writeln(' \$whereBuffer", where?.$kFieldNameToStoreClauseVariables,')
       ..writeln(');')
       ..writeln('if (results.isEmpty) {')
       ..writeln('return [];')
